@@ -1,0 +1,21 @@
+#!/bin/bash
+
+METADATA_LOCAL_IPV4=`curl http://169.254.169.254/2014-02-25/meta-data/local-ipv4`
+
+SERVICE_NAME=sampleapp
+EXPECTED_STATUS=passing
+
+# if jq 1.3 or later is available, this can be
+# simplified to use the -e exit status argument
+# to test the .Status value.
+
+return_value=1
+while [ $return_value != 0 ]; do
+  sleep 1
+  actual_status=$(curl -s $METADATA_LOCAL_IPV4:8500/v1/agent/checks | jq -r '.["service:sampleapp"].Status')
+  if [ "$actual_status" == "$EXPECTED_STATUS" ]; then
+    return_value=0
+  fi
+  echo "Expected service status: $EXPECTED_STATUS"
+  echo "Actual service status: $actual_status"
+done

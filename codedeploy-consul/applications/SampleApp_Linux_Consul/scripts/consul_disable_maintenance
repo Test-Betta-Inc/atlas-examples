@@ -1,0 +1,5 @@
+#!/bin/bash
+
+METADATA_LOCAL_IPV4=`curl http://169.254.169.254/2014-02-25/meta-data/local-ipv4`
+
+consul maint -http-addr=$METADATA_LOCAL_IPV4:8500 -disable

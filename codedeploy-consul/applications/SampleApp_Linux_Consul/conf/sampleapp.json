@@ -1,0 +1,13 @@
+{
+  "service": {
+    "name": "sampleapp",
+    "port": 80,
+    "checks": [
+      {
+        "http": "http://localhost/health",
+        "interval": "10s",
+        "timeout": "1s"
+      }
+    ]
+  }
+}
