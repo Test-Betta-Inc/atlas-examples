@@ -42,7 +42,7 @@ Run `$ terraform plan` followed by `$ terraform apply` to create security group.
 
 Add key pair and security group to aws instance
 ------
-Link key pair and security group to the instance by adding `key_name = "${aws_key_pair.debugging.key_name}"` and `security_groups = ["${aws_security_group.allow_ssh.id}"]` in terraform configuration of aws instance.
+Link key pair and security group to the instance by adding `key_name = "${aws_key_pair.debugging.key_name}"` and `security_groups = ["${aws_security_group.allow_ssh.id}"]` in terraform configuration of aws instance. Note that this instance assumes you are in the `us-east-1` region. If you are in a different region, use an AMI specific to that region.
 
 ```
 resource "aws_instance" "app_server" {

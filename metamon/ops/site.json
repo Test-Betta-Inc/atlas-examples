@@ -1,0 +1,87 @@
+{
+    "variables": {
+        "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+        "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+        "ssh_username": "ubuntu"
+    },
+    "builders": [{
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "region": "us-east-1",
+        "source_ami": "ami-9a562df2",
+        "instance_type": "t2.micro",
+        "ssh_username": "{{user `ssh_username`}}",
+        "ami_name": "metamon {{timestamp}}",
+        "ami_description": "AMI for metamon",
+        "run_tags": {
+            "ami-create": "metamon"
+        },
+        "tags": {
+            "ami": "metamon"
+        }
+    }],
+    "push": {
+      "name": "YOUR_ATLAS_USERNAME/metamon",
+      "vcs": false
+    },
+    "provisioners": [
+    {
+        "type": "shell",
+        "inline": [
+            "sudo mkdir /ops",
+            "sudo chmod a+w /ops"
+        ]
+    },
+    {
+        "type": "file",
+        "source": ".",
+        "destination": "/ops"
+    },
+    {
+        "type": "shell",
+        "script": "scripts/base.sh"
+    },
+    {
+        "type": "shell",
+        "script": "scripts/consul_client.sh"
+    },
+    {
+        "type": "shell",
+        "script": "scripts/supervisor.sh"
+    },
+    {
+        "type": "shell",
+        "script": "scripts/ansible.sh",
+        "execute_command": "echo {{user `ssh_username`}} | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    },
+    {
+        "type": "shell",
+        "inline": [
+            "sudo mkdir /app",
+            "sudo chmod a+w /app"
+        ]
+    },
+    {
+        "type": "file",
+        "source": "/packer/app",
+        "destination": "/app"
+    },
+    {
+        "type": "ansible-local",
+        "playbook_file": "site_local.yml",
+        "playbook_dir": ".",
+        "group_vars": "group_vars"
+    }
+    ],
+    "post-processors": [
+      {
+        "type": "atlas",
+        "artifact": "YOUR_ATLAS_USERNAME/metamon",
+        "artifact_type": "aws.ami",
+        "metadata": {
+          "created_at": "{{timestamp}}"
+        }
+      }
+    ]
+}
