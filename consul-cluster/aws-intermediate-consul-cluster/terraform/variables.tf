@@ -1,7 +1,13 @@
+//
+// AWS Variables
+//
 variable "access_key" {}
 variable "secret_key" {}
 variable "region" {}
 
+//
+// Atlas Variables
+//
 variable "atlas_token" { }
 variable "atlas_organization" {}
 variable "atlas_environment" {}
@@ -12,7 +18,7 @@ variable "atlas_environment" {}
 variable "key_name" {}
 
 variable "instance_type" {
-	default = "t2.micro"
+	default = "t2.medium"
 }
 
 variable "consul_bootstrap_expect" {

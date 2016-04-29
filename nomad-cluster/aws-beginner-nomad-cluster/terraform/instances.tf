@@ -261,7 +261,7 @@ resource "aws_instance" "nomad_client" {
     Name = "nomad_client"
   }
 
-  count = 3
+  count = 1
 
   provisioner "remote-exec" {
     connection {
@@ -271,19 +271,9 @@ resource "aws_instance" "nomad_client" {
     }
 
     scripts = [
-      "${module.shared.path}/nomad/installers/docker_install.sh"
-    ]
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      user     = "ubuntu"
-      key_file = "${module.shared.private_key_path}"
-      agent    = "false"
-    }
-
-    scripts = [
-      "${module.shared.path}/nomad/installers/nomad_install.sh"
+      "${module.shared.path}/nomad/installers/docker_install.sh",
+      "${module.shared.path}/nomad/installers/java_install.sh",
+      "${module.shared.path}/nomad/installers/nomad_install.sh",
     ]
   }
 
